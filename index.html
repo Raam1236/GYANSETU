@@ -37,22 +37,32 @@
       }
       .no-scrollbar::-webkit-scrollbar { display: none; }
       .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      /* Background for auth page animation */
+      .auth-background {
+          background: linear-gradient(135deg, #1e3a8a, #422006, #a16207);
+          background-size: 400% 400%;
+          animation: gradient 15s ease infinite;
+      }
+      @keyframes gradient {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+      }
     </style>
   <script type="importmap">
 {
   "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
     "react": "https://esm.sh/react@^19.2.3",
     "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
-    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
-    "vite": "https://esm.sh/vite@^7.3.1"
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "vite": "https://esm.sh/vite@^7.3.1",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2"
   }
 }
 </script>
 </head>
   <body class="bg-gray-50 dark:bg-deepBlue-950 text-gray-900 dark:text-gray-100">
     <div id="root"></div>
-    <!-- This is the crucial line that was missing for standard hosting -->
     <script type="module" src="/index.tsx"></script>
   </body>
 </html>
