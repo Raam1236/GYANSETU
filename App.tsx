@@ -235,22 +235,21 @@ const translations: Record<string, any> = {
   },
   hi: {
     appName: 'ज्ञानसेतु',
-    // ... (rest of hi content)
   },
   kn: {
     appName: 'ಜ್ಞಾನಸೇತು',
-    // ... (rest of kn content)
-  }
+  },
+  es: {},
+  ta: {},
+  te: {},
+  bn: {}
 };
 
-// Simplified language population for ES, TA, TE, BN using English as fallback
-['hi', 'kn', 'es', 'ta', 'te', 'bn'].forEach(lang => {
-  if (!translations[lang]) {
-    translations[lang] = { ...translations.en };
-  } else {
-    // Merge existing keys with English fallback
-    translations[lang] = { ...translations.en, ...translations[lang] };
-  }
+// Properly map language fallbacks to prevent runtime errors
+const languages = ['hi', 'kn', 'es', 'ta', 'te', 'bn'];
+languages.forEach(lang => {
+  const existing = translations[lang] || {};
+  translations[lang] = { ...translations.en, ...existing };
 });
 
 type Language = string;
@@ -281,7 +280,7 @@ const CallPage = React.lazy(() => import('./pages/CallPage'));
 const GurudakshinaModal = React.lazy(() => import('./components/GurudakshinaModal'));
 const AuthPage = React.lazy(() => import('./pages/AuthPage'));
 
-// --- INLINE ICONS ---
+// --- ICONS ---
 const MenuIcon: React.FC<{ className?: string }> = ({ className }) => (
     <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
@@ -311,7 +310,7 @@ const SunIcon: React.FC<{ className?: string }> = ({ className }) => <svg xmlns=
 const MoonIcon: React.FC<{ className?: string }> = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" /></svg>;
 const SystemIcon: React.FC<{ className?: string }> = ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>;
 
-// --- LOCALIZED INLINE COMPONENTS ---
+// --- MODALS ---
 const CopyrightModal: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const { t } = useLocalization();
     return (
@@ -386,7 +385,6 @@ const OwnerDashboardModal: React.FC<{ onClose: () => void }> = ({ onClose }) => 
     const { t } = useLocalization();
     const [activeTab, setActiveTab] = useState('analytics');
 
-    // Data states
     const [stats, setStats] = useState({ totalUsers: 0, gurus: 0, shishyas: 0, posts: 0, calls: 0 });
     const [allUsers, setAllUsers] = useState<StoredUser[]>([]);
     const [feedbacks, setFeedbacks] = useState<FeedbackRecord[]>([]);
@@ -616,8 +614,8 @@ const SideNav: React.FC<{
                             <select value={language} onChange={handleLanguageChange} className="bg-transparent flex-1 focus:outline-none appearance-none">
                                 <option value="en">English</option>
                                 <option value="hi">Hindi</option>
-                                <option value="es">Spanish</option>
                                 <option value="kn">Kannada</option>
+                                <option value="es">Spanish</option>
                                 <option value="ta">Tamil</option>
                                 <option value="te">Telugu</option>
                                 <option value="bn">Bengali</option>
@@ -651,11 +649,6 @@ const SideNav: React.FC<{
                                    <SystemIcon className="h-5 w-5 text-gray-700 dark:text-gray-200" />
                                </button>
                            </div>
-                       </div>
-                       
-                       <div className="flex space-x-4 pt-4 border-t dark:border-gray-700 mt-4">
-                           <a href="https://whatsapp.com/channel/0029VbBXkkMCxoAyzASG1F0Y" target="_blank" rel="noopener noreferrer" className="text-gray-500 dark:text-gray-400 hover:text-deepBlue-700 dark:hover:text-deepBlue-400">WhatsApp</a>
-                           <a href="https://www.instagram.com/tukaram_gabit1234/tagged/" target="_blank" rel="noopener noreferrer" className="text-gray-500 dark:text-gray-400 hover:text-deepBlue-700 dark:hover:text-deepBlue-400">Instagram</a>
                        </div>
                     </nav>
                 </div>
@@ -693,7 +686,7 @@ const App: React.FC = () => {
 };
 
 
-// --- APP CONTENT & LOGIC ---
+// --- APP CONTENT ---
 const AppContent: React.FC = () => {
   const { t } = useLocalization();
   const [currentUser, setCurrentUser] = useState<LoggedInUser | null>(null);
