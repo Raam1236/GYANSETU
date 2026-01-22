@@ -1,6 +1,5 @@
-
 import React, { useState, Suspense, useEffect, createContext, useContext, useMemo } from 'react';
-import { type ActivePage, type LoggedInUser, type Guru, type CallType, type Post, type Theme, type CommissionRecord, type BankDetails, type FeedbackRecord, type StoredUser, type CallRecord } from './types';
+import { type ActivePage, type LoggedInUser, type Guru, type CallType, type Post, type Theme, type BankDetails, type StoredUser, type CallRecord } from './types';
 import BottomNav from './components/BottomNav';
 import Spinner from './components/Spinner';
 import { APP_OWNER_USERNAME } from './constants';
@@ -8,222 +7,196 @@ import BankDetailsModal from './components/BankDetailsModal';
 
 // --- LOCALIZATION SETUP ---
 
-const translations: Record<string, any> = {
-  en: {
-    appName: 'GyanSetu',
-    close: 'Close',
-    cancel: 'Cancel',
-    submit: 'Submit',
-    headerTitleHindi: 'ज्ञानसेतु',
-    headerTitle: 'GyanSetu',
-    openMenu: 'Open navigation menu',
-    menuTitle: 'GyanSetu Menu',
-    language: 'Language',
-    support: 'Support',
-    contactUs: 'Contact Us',
-    copyright: 'Copyright',
-    ownerDashboard: 'Owner Dashboard',
-    theme: 'Theme',
-    themeLight: 'Light',
-    themeDark: 'Dark',
-    themeSystem: 'System',
-    appCopyrightDesc: '📜 App Copyright Description',
-    copyrightLine1: '© 2025 GYAN SETU. All Rights Reserved.',
-    copyrightLine2: 'This application and its contents are the intellectual property of RG Creation.',
-    copyrightLine3: 'Unauthorized copying is strictly prohibited.',
-    copyrightLine4: 'Protected under copyright laws.',
-    copyrightLine5: 'All trademarks belong to their respective owners.',
-    copyrightExample: 'Example:',
-    copyrightExampleText: '© 2025 GyanSetu. All Rights Reserved.',
-    appFeedback: 'App Feedback',
-    feedbackPlaceholder: 'Tell us what you think...',
-    ownerDashboardWelcome: 'Welcome, App Owner.',
-    ownerDashboardDesc: 'Management panel.',
-    ownerDashboardComingSoon: 'More features coming!',
-    ownerTotalCommission: 'Total Commission Earned',
-    ownerTotalTransactions: 'Total Transactions',
-    ownerBankDetails: 'Receiving Bank Details',
-    ownerCommissionHistory: 'Commission History',
-    ownerTotalPaid: 'Total Paid',
-    ownerCommission: 'Commission',
-    ownerNoBankDetails: 'No bank details added.',
-    ownerNoCommissions: 'No commissions yet.',
-    ownerAnalytics: 'App Analytics',
-    ownerUserManagement: 'User Management',
-    ownerAppReviews: 'App Reviews',
-    ownerSettings: 'Settings',
-    ownerTotalUsers: 'Total Users',
-    ownerGurus: 'Gurus',
-    ownerShishyas: 'Shishyas',
-    ownerTotalPosts: 'Total Posts',
-    ownerTotalCalls: 'Total Calls',
-    ownerRevenueOverview: 'Revenue Overview',
-    ownerAllUsers: 'All Users',
-    ownerUserRole: 'Role',
-    ownerUserEmail: 'Email',
-    ownerNoUsers: 'No users found.',
-    ownerNoFeedback: 'No feedback yet.',
-    ownerFeedbackDate: 'Date',
-    ownerFeedbackContent: 'Feedback',
-    authWelcome: 'Welcome Back',
-    authLoginPrompt: 'Login to continue your journey.',
-    authIdentifierPlaceholder: 'Email, Username or Mobile',
-    authPasswordPlaceholder: 'Password',
-    authLoginButton: 'Login',
-    authLoggingInButton: 'Logging in...',
-    authForgotPasswordLink: 'Forgot Password?',
-    authNoAccountPrompt: "Don't have an account?",
-    authSignUpLink: 'Sign Up',
-    authJoinTitle: 'Join GyanSetu',
-    authChoosePath: 'Choose your path.',
-    authRoleGuru: 'I am a Guru',
-    authRoleGuruDesc: 'Share your wisdom.',
-    authRoleShishya: 'I am a Shishya',
-    authRoleShishyaDesc: 'Seek knowledge.',
-    authNextButton: 'Next',
-    authHaveAccountPrompt: 'Already have an account?',
-    authCreateAccountTitle: 'Create Your Account',
-    authFirstNamePlaceholder: 'First Name',
-    authLastNamePlaceholder: 'Last Name',
-    authEmailPlaceholder: 'Email',
-    authUsernamePlaceholder: 'Username',
-    authMobilePlaceholder: 'Mobile Number',
-    authConfirmPasswordPlaceholder: 'Confirm Password',
-    authCreateAccountButton: 'Create Account',
-    authCreatingAccountButton: 'Creating...',
-    authForgotPasswordTitle: 'Forgot Password',
-    authForgotPasswordPrompt: 'Enter your email or mobile.',
-    authSendOTPButton: 'Send OTP',
-    authSendingOTPButton: 'Sending...',
-    authResetPasswordTitle: 'Reset Password',
-    authOTPSentPrompt: 'OTP sent to {identifier}.',
-    authOTPPlaceholder: 'Enter 6-digit OTP',
-    authNewPasswordPlaceholder: 'New Password',
-    authResetPasswordButton: 'Reset Password',
-    authResettingPasswordButton: 'Resetting...',
-    errorInvalidCredentials: 'Invalid credentials.',
-    errorPasswordsNoMatch: 'Passwords do not match.',
-    errorPasswordTooShort: 'Password too short.',
-    errorEmailExists: 'Email already exists.',
-    errorUsernameExists: 'Username taken.',
-    errorMobileExists: 'Mobile exists.',
-    errorSelectRole: 'Select a role.',
-    navHome: 'Home',
-    navSearch: 'Discover',
-    navCreate: 'Create',
-    navProfile: 'Profile',
-    homeWelcome: 'Welcome to GyanSetu!',
-    homeCommunityStart: 'Community starting.',
-    homeNoWisdom: 'No wisdom yet.',
-    homeDiscoverGurus: 'Discover Gurus',
-    homeFeaturedGurus: 'Featured Gurus',
-    homeCreatePrompt: '{firstName}, share today?',
-    homeCreateArticle: 'Article',
-    homeCreateVideo: 'Video',
-    homeCreateImage: 'Image',
-    postGyanShort: 'Gyan Short',
-    postAnubhavArticle: 'Anubhav Article',
-    postImagePost: 'Image Post',
-    postReadMore: 'Read More...',
-    postGurudakshina: 'Gurudakshina',
-    discoverTitle: 'Find your Guru',
-    discoverSubtitle: 'Connect for wisdom.',
-    discoverSearchPlaceholder: 'Search experts...',
-    discoverSortBy: 'Sort by:',
-    discoverSortDefault: 'Default',
-    discoverSortRating: 'Rating',
-    discoverSortExpertise: 'Expertise',
-    discoverViewProfile: 'View Profile',
-    discoverNoGurusTitle: 'No Gurus Found',
-    discoverNoGurusSubtitle: 'Growing soon.',
-    discoverNoGurusPrompt: 'Check back later.',
-    createTitle: 'Share your Gyan',
-    createSubtitle: 'Wisdom today?',
-    createTypeArticle: '✍️ Article',
-    createTypeVideo: '🎬 Video',
-    createTypeImage: '🖼️ Image',
-    createFieldTitle: 'Title',
-    createFieldTitlePlaceholder: 'Catchy title...',
-    createFieldContent: 'Content',
-    createFieldContentPlaceholder: 'Write here...',
-    createFieldMediaUpload: 'Upload {mediaType}',
-    createFieldMediaImage: 'Image',
-    createFieldMediaVideo: 'Video',
-    createFieldMediaUploadFile: 'Upload file',
-    createFieldMediaDragDrop: 'or drag drop',
-    createFieldMediaFileType: 'PNG/JPG/MP4',
-    createFieldCaption: 'Caption',
-    createFieldCaptionPlaceholder: 'Describe it...',
-    createPostButton: 'Share Gyan',
-    profileRecommendedGurus: 'Recommended',
-    profileFollow: 'Follow',
-    profileEditProfile: 'Edit Profile',
-    profileFirstName: 'First Name',
-    profileLastName: 'Last Name',
-    profileUsername: 'Username',
-    profileExpertise: 'Expertise',
-    profileBio: 'Bio',
-    profileSaveChanges: 'Save',
-    callVideo: 'Video',
-    callVoice: 'Voice',
-    profileBankDetailsTitle: 'Bank Details',
-    profileBankDetailsEdit: 'Edit',
-    profileBankDetailsPrompt: 'Add bank for Dakshina.',
-    profileBankDetailsAdd: 'Add',
-    profileMyGyan: 'My Gyan',
-    profileMyActivity: 'Activity',
-    profileCallHistory: 'Calls',
-    profileNoPosts: 'No posts yet.',
-    profileNoCalls: 'No history.',
-    profileActivityPlaceholder: 'Activity here.',
-    profileLogout: 'Logout',
-    bankAccountHolder: 'Holder Name',
-    bankAccountHolderPlaceholder: 'Name',
-    bankAccountNumber: 'Account Number',
-    bankAccountNumberPlaceholder: 'Number',
-    bankIFSC: 'IFSC',
-    bankIFSCPlaceholder: 'IFSC',
-    bankUPI: 'UPI ID',
-    bankUPIPlaceholder: 'UPI',
-    bankSaveButton: 'Save',
-    dakshinaTitle: 'Dakshina for',
-    dakshinaAmountPrompt: 'Select amount (₹)',
-    dakshinaCustomAmountPlaceholder: 'Custom amount',
-    dakshinaPayButton: 'Pay UPI',
-    dakshinaOr: 'OR',
-    dakshinaScanPrompt: 'Scan QR',
-    dakshinaQRGeneration: 'Enter amount for QR',
-    callWith: '{callType} with',
-    premiumTitle: 'Free over!',
-    premiumMessage: 'Go Premium!',
-    premiumGoPremium: 'Upgrade',
-    premiumEndCall: 'End',
-    callCameraOff: 'Off',
-    networkGood: 'Good',
-    callDuration: 'Duration',
-  }
+const baseTranslations = {
+  appName: 'GyanSetu',
+  close: 'Close',
+  cancel: 'Cancel',
+  submit: 'Submit',
+  headerTitleHindi: 'ज्ञानसेतु',
+  headerTitle: 'GyanSetu',
+  openMenu: 'Open navigation menu',
+  menuTitle: 'GyanSetu Menu',
+  language: 'Language',
+  support: 'Support',
+  contactUs: 'Contact Us',
+  copyright: 'Copyright',
+  ownerDashboard: 'Owner Dashboard',
+  theme: 'Theme',
+  themeLight: 'Light',
+  themeDark: 'Dark',
+  themeSystem: 'System',
+  appCopyrightDesc: '📜 App Copyright Description',
+  copyrightLine1: '© 2025 GYAN SETU. All Rights Reserved.',
+  copyrightLine2: 'This application and its contents are the intellectual property of RG Creation.',
+  copyrightLine3: 'Unauthorized copying is strictly prohibited.',
+  copyrightLine4: 'Protected under copyright laws.',
+  copyrightLine5: 'All trademarks belong to their respective owners.',
+  copyrightExample: 'Example:',
+  copyrightExampleText: '© 2025 GyanSetu. All Rights Reserved.',
+  appFeedback: 'App Feedback',
+  feedbackPlaceholder: 'Tell us what you think...',
+  ownerDashboardWelcome: 'Welcome, App Owner.',
+  authWelcome: 'Welcome Back',
+  authLoginPrompt: 'Login to continue your journey.',
+  authIdentifierPlaceholder: 'Email, Username or Mobile',
+  authPasswordPlaceholder: 'Password',
+  authLoginButton: 'Login',
+  authLoggingInButton: 'Logging in...',
+  authForgotPasswordLink: 'Forgot Password?',
+  authNoAccountPrompt: "Don't have an account?",
+  authSignUpLink: 'Sign Up',
+  authJoinTitle: 'Join GyanSetu',
+  authChoosePath: 'Choose your path.',
+  authRoleGuru: 'I am a Guru',
+  authRoleGuruDesc: 'Share your wisdom.',
+  authRoleShishya: 'I am a Shishya',
+  authRoleShishyaDesc: 'Seek knowledge.',
+  authNextButton: 'Next',
+  authHaveAccountPrompt: 'Already have an account?',
+  authCreateAccountTitle: 'Create Your Account',
+  authFirstNamePlaceholder: 'First Name',
+  authLastNamePlaceholder: 'Last Name',
+  authEmailPlaceholder: 'Email',
+  authUsernamePlaceholder: 'Username',
+  authMobilePlaceholder: 'Mobile Number',
+  authConfirmPasswordPlaceholder: 'Confirm Password',
+  authCreateAccountButton: 'Create Account',
+  authCreatingAccountButton: 'Creating...',
+  authForgotPasswordTitle: 'Forgot Password',
+  authForgotPasswordPrompt: 'Enter your email or mobile.',
+  authSendOTPButton: 'Send OTP',
+  authSendingOTPButton: 'Sending...',
+  authResetPasswordTitle: 'Reset Password',
+  authOTPSentPrompt: 'OTP sent to {identifier}.',
+  authOTPPlaceholder: 'Enter 6-digit OTP',
+  authNewPasswordPlaceholder: 'New Password',
+  authResetPasswordButton: 'Reset Password',
+  authResettingPasswordButton: 'Resetting...',
+  errorInvalidCredentials: 'Invalid credentials.',
+  errorPasswordsNoMatch: 'Passwords do not match.',
+  errorPasswordTooShort: 'Password too short.',
+  errorEmailExists: 'Email already exists.',
+  errorUsernameExists: 'Username taken.',
+  errorMobileExists: 'Mobile exists.',
+  errorSelectRole: 'Select a role.',
+  navHome: 'Home',
+  navSearch: 'Discover',
+  navCreate: 'Create',
+  navProfile: 'Profile',
+  homeWelcome: 'Welcome to GyanSetu!',
+  homeCommunityStart: 'Community starting.',
+  homeNoWisdom: 'No wisdom yet.',
+  homeDiscoverGurus: 'Discover Gurus',
+  homeFeaturedGurus: 'Featured Gurus',
+  homeCreatePrompt: '{firstName}, share today?',
+  homeCreateArticle: 'Article',
+  homeCreateVideo: 'Video',
+  homeCreateImage: 'Image',
+  postGyanShort: 'Gyan Short',
+  postAnubhavArticle: 'Anubhav Article',
+  postImagePost: 'Image Post',
+  postReadMore: 'Read More...',
+  postGurudakshina: 'Gurudakshina',
+  discoverTitle: 'Find your Guru',
+  discoverSubtitle: 'Connect for wisdom.',
+  discoverSearchPlaceholder: 'Search experts...',
+  discoverSortBy: 'Sort by:',
+  discoverSortDefault: 'Default',
+  discoverSortRating: 'Rating',
+  discoverSortExpertise: 'Expertise',
+  discoverViewProfile: 'View Profile',
+  discoverNoGurusTitle: 'No Gurus Found',
+  discoverNoGurusSubtitle: 'Growing soon.',
+  discoverNoGurusPrompt: 'Check back later.',
+  createTitle: 'Share your Gyan',
+  createSubtitle: 'Wisdom today?',
+  createTypeArticle: '✍️ Article',
+  createTypeVideo: '🎬 Video',
+  createTypeImage: '🖼️ Image',
+  createFieldTitle: 'Title',
+  createFieldTitlePlaceholder: 'Catchy title...',
+  createFieldContent: 'Content',
+  createFieldContentPlaceholder: 'Write here...',
+  createFieldMediaUpload: 'Upload {mediaType}',
+  createFieldMediaImage: 'Image',
+  createFieldMediaVideo: 'Video',
+  createFieldMediaUploadFile: 'Upload file',
+  createFieldMediaDragDrop: 'or drag drop',
+  createFieldMediaFileType: 'PNG/JPG/MP4',
+  createFieldCaption: 'Caption',
+  createFieldCaptionPlaceholder: 'Describe it...',
+  createPostButton: 'Share Gyan',
+  profileRecommendedGurus: 'Recommended',
+  profileFollow: 'Follow',
+  profileEditProfile: 'Edit Profile',
+  profileFirstName: 'First Name',
+  profileLastName: 'Last Name',
+  profileUsername: 'Username',
+  profileExpertise: 'Expertise',
+  profileBio: 'Bio',
+  profileSaveChanges: 'Save',
+  callVideo: 'Video',
+  callVoice: 'Voice',
+  profileBankDetailsTitle: 'Bank Details',
+  profileBankDetailsEdit: 'Edit',
+  profileBankDetailsPrompt: 'Add bank for Dakshina.',
+  profileBankDetailsAdd: 'Add',
+  profileMyGyan: 'My Gyan',
+  profileMyActivity: 'Activity',
+  profileCallHistory: 'Calls',
+  profileNoPosts: 'No posts yet.',
+  profileNoCalls: 'No history.',
+  profileActivityPlaceholder: 'Activity here.',
+  profileLogout: 'Logout',
+  bankAccountHolder: 'Holder Name',
+  bankAccountHolderPlaceholder: 'Name',
+  bankAccountNumber: 'Account Number',
+  bankAccountNumberPlaceholder: 'Number',
+  bankIFSC: 'IFSC',
+  bankIFSCPlaceholder: 'IFSC',
+  bankUPI: 'UPI ID',
+  bankUPIPlaceholder: 'UPI',
+  bankSaveButton: 'Save',
+  dakshinaTitle: 'Dakshina for',
+  dakshinaAmountPrompt: 'Select amount (₹)',
+  dakshinaCustomAmountPlaceholder: 'Custom amount',
+  dakshinaPayButton: 'Pay UPI',
+  dakshinaOr: 'OR',
+  dakshinaScanPrompt: 'Scan QR',
+  dakshinaQRGeneration: 'Enter amount for QR',
+  callWith: '{callType} with',
+  premiumTitle: 'Free over!',
+  premiumMessage: 'Go Premium!',
+  premiumGoPremium: 'Upgrade',
+  premiumEndCall: 'End',
+  callCameraOff: 'Off',
+  networkGood: 'Good',
+  callDuration: 'Duration',
 };
 
-const languages = ['hi', 'kn', 'es', 'ta', 'te', 'bn'];
-languages.forEach(lang => {
-  const existing = translations[lang] || {};
-  translations[lang] = { ...translations.en, ...existing };
-});
+const translations: Record<string, Record<string, string>> = {
+  en: baseTranslations,
+  hi: { ...baseTranslations, headerTitleHindi: 'ज्ञानसेतु' },
+  kn: { ...baseTranslations },
+  es: { ...baseTranslations },
+  ta: { ...baseTranslations },
+  te: { ...baseTranslations },
+  bn: { ...baseTranslations },
+};
 
-type Language = string;
-export type TranslationKey = keyof typeof translations.en;
+export type TranslationKey = keyof typeof baseTranslations;
 
 interface LocalizationContextType {
-  language: Language;
-  setLanguage: (lang: Language) => void;
-  t: (key: TranslationKey, replacements?: { [key: string]: string | number }) => string;
+  language: string;
+  setLanguage: (lang: string) => void;
+  t: (key: TranslationKey, replacements?: Record<string, string | number>) => string;
 }
 
 const LocalizationContext = createContext<LocalizationContextType | null>(null);
 
 export const useLocalization = () => {
   const context = useContext(LocalizationContext);
-  if (!context) throw new Error('useLocalization error');
+  if (!context) throw new Error('Localization provider not found');
   return context;
 };
 
@@ -243,14 +216,18 @@ const MenuIcon = ({ className }: { className?: string }) => (
 );
 
 const App: React.FC = () => {
-  const [language, setLanguage] = useState<Language>(() => localStorage.getItem('gyansetu-lang') || 'en');
+  const [language, setLanguage] = useState<string>(() => localStorage.getItem('gyansetu-lang') || 'en');
 
-  useEffect(() => { localStorage.setItem('gyansetu-lang', language); }, [language]);
+  useEffect(() => {
+    localStorage.setItem('gyansetu-lang', language);
+  }, [language]);
 
-  const t = useMemo(() => (key: TranslationKey, replacements?: any) => {
-    let text = translations[language]?.[key] || translations.en[key] || key;
+  const t = useMemo(() => (key: TranslationKey, replacements?: Record<string, string | number>) => {
+    let text = translations[language]?.[key as string] || translations.en[key as string] || key;
     if (replacements) {
-        Object.keys(replacements).forEach(k => { text = text.replace(`{${k}}`, String(replacements[k])); });
+        Object.keys(replacements).forEach(k => {
+            text = text.replace(`{${k}}`, String(replacements[k]));
+        });
     }
     return text;
   }, [language]);
@@ -269,12 +246,16 @@ const AppContent: React.FC = () => {
   const [activePage, setActivePage] = useState<ActivePage>('home');
   const [callInfo, setCallInfo] = useState<any>(null);
   const [dakshinaTarget, setDakshinaTarget] = useState<any>(null);
-  const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem('gyansetu-theme') as Theme) || 'system');
+  const [theme] = useState<Theme>(() => (localStorage.getItem('gyansetu-theme') as Theme) || 'system');
 
   useEffect(() => {
     const saved = localStorage.getItem('gyansetu-session');
     if (saved) {
-      try { setCurrentUser(JSON.parse(saved)); } catch (e) { localStorage.removeItem('gyansetu-session'); }
+      try {
+        setCurrentUser(JSON.parse(saved));
+      } catch (e) {
+        localStorage.removeItem('gyansetu-session');
+      }
     }
     setIsAuthLoading(false);
   }, []);
@@ -289,7 +270,14 @@ const AppContent: React.FC = () => {
   }, [theme]);
 
   if (isAuthLoading) return <Spinner />;
-  if (!currentUser) return <Suspense fallback={<Spinner />}><AuthPage onAuthSuccess={u => { setCurrentUser(u); setActivePage('home'); }} /></Suspense>;
+
+  if (!currentUser) {
+    return (
+      <Suspense fallback={<Spinner />}>
+        <AuthPage onAuthSuccess={u => { setCurrentUser(u); setActivePage('home'); }} />
+      </Suspense>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-deepBlue-950 font-sans">
@@ -309,8 +297,21 @@ const AppContent: React.FC = () => {
           {activePage === 'profile' && <ProfilePage currentUser={currentUser} startCall={(guru, type) => setCallInfo({guru, type})} openDakshinaModal={setDakshinaTarget} onLogout={() => { localStorage.removeItem('gyansetu-session'); setCurrentUser(null); }} />}
         </Suspense>
       </main>
-      {callInfo && <Suspense fallback={<Spinner />}><CallPage guru={callInfo.guru} type={callInfo.type} onEndCall={() => setCallInfo(null)} currentUser={currentUser} /></Suspense>}
-      {dakshinaTarget && <Suspense fallback={<Spinner />}><GurudakshinaModal guru={dakshinaTarget.guru || dakshinaTarget} post={dakshinaTarget.post || dakshinaTarget} onClose={() => setDakshinaTarget(null)} currentUser={currentUser} /></Suspense>}
+      {callInfo && (
+        <Suspense fallback={<Spinner />}>
+          <CallPage guru={callInfo.guru} type={callInfo.type} onEndCall={() => setCallInfo(null)} currentUser={currentUser} />
+        </Suspense>
+      )}
+      {dakshinaTarget && (
+        <Suspense fallback={<Spinner />}>
+          <GurudakshinaModal 
+            guru={dakshinaTarget.guru || dakshinaTarget} 
+            post={dakshinaTarget.post || dakshinaTarget} 
+            onClose={() => setDakshinaTarget(null)} 
+            currentUser={currentUser} 
+          />
+        </Suspense>
+      )}
       <BottomNav activePage={activePage} setActivePage={setActivePage} userRole={currentUser.role} />
     </div>
   );
